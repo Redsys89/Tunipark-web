@@ -1,0 +1,13 @@
+<label>Nom complet
+    [text* your-name autocomplete:name placeholder "Votre nom"] </label>
+
+<label>Email
+    [email* your-email autocomplete:email placeholder "vous@exemple.com"] </label>
+
+<label>Téléphone
+    [tel your-phone placeholder "+216 __ ___ ___"] </label>
+
+<label>Message
+    [textarea* your-message placeholder "Votre message..."] </label>
+
+[submit "Envoyer"]

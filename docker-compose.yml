@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wp
+      MARIADB_PASSWORD: ${DB_PASSWORD:?définir DB_PASSWORD dans .env}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?définir DB_ROOT_PASSWORD dans .env}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment: &wp_env
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:?définir DB_PASSWORD dans .env}
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+
+  # Interface web pour consulter la base de données
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+
+  # WP-CLI : utilisé par setup.sh pour tout configurer automatiquement
+  cli:
+    image: wordpress:cli
+    user: "33:33"
+    depends_on:
+      - db
+      - wordpress
+    environment: *wp_env
+    volumes:
+      - wp_data:/var/www/html
+      - ./:/project
+    profiles: ["tools"]
+
+volumes:
+  db_data:
+  wp_data:

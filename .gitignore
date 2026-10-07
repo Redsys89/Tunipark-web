@@ -1,0 +1,5 @@
+# Pages générées par setup.sh (contiennent les URLs locales)
+build/
+
+# Mots de passe (voir .env.example)
+.env
